@@ -189,7 +189,7 @@
       body: JSON.stringify({ email: email, name: name || null })
     }).then(function (res) {
       if (res.ok) {
-        note.textContent = "You're in! You're a founding member \u2014 we'll email you the moment the app launches.";
+        note.textContent = "You're in, princess \uD83D\uDC51 You're on the waiting list \u2014 we'll email you the moment the app launches.";
         note.className = "note ok";
         form.reset();
       } else {
