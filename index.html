@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href="data:," />
+  <title>Princesses by Nariess (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #fffafa;
+      --surface: #ffffff;
+      --blush: #faeaee;
+      --pink: #f4cbd6;
+      --rose: #b88870;
+      --rose-dark: #8e5a48;
+      --gold: #ba8b31;
+      --gold-soft: #fbf2d9;
+      --ink: #392824;
+      --muted: #79645f;
+      --line: #eadbd6;
+      --shadow: 0 24px 70px rgba(105, 69, 57, .13);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: #f5eeec;
+      color: var(--ink);
+      font-family: "Manrope", sans-serif;
+      line-height: 1.45;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(184,136,112,.35);
+      outline-offset: 2px;
+    }
+    .phone {
+      width: min(100%, 480px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .onboarding {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      position: relative;
+      isolation: isolate;
+    }
+    .onboarding::before, .onboarding::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      z-index: -1;
+      opacity: .72;
+    }
+    .onboarding::before { width: 210px; height: 210px; background: var(--blush); right: -95px; top: 92px; }
+    .onboarding::after { width: 160px; height: 160px; background: var(--gold-soft); left: -95px; bottom: 110px; }
+    .flow-head {
+      height: 76px;
+      padding: max(18px, env(safe-area-inset-top)) 76px 10px;
+      display: grid;
+      align-items: center;
+      position: relative;
+    }
+    .back-btn, .skip-btn {
+      width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent;
+      display: grid; place-items: center;
+    }
+    .back-btn { position: absolute; left: 22px; top: max(18px, env(safe-area-inset-top)); background: var(--surface); border: 1px solid var(--line); }
+    .back-btn[hidden], .skip-btn[hidden] { display: none; }
+    .skip-btn { position: absolute; right: 22px; top: max(18px, env(safe-area-inset-top)); color: var(--muted); font-size: 12px; font-weight: 800; }
+    .progress { height: 5px; background: #f2e5e3; border-radius: 99px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--rose), var(--gold)); border-radius: inherit; transition: width .25s ease; }
+    .step-count { margin-top: 7px; text-align: center; font-size: 10px; color: var(--muted); font-weight: 700; }
+    .steps { flex: 1; display: flex; }
+    .step {
+      display: none;
+      width: 100%;
+      padding: 22px 24px 126px;
+      overflow-y: auto;
+      animation: reveal .22s ease;
+    }
+    .step.active { display: block; }
+    @keyframes reveal { from { opacity: .2; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+    .step-kicker { margin: 0 0 9px; color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    .step h1 {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(42px, 12vw, 58px);
+      line-height: .95;
+      letter-spacing: -.025em;
+      font-weight: 600;
+    }
+    .step h1 em { color: var(--rose); font-weight: 600; }
+    .lead { margin: 16px 0 25px; color: var(--muted); font-size: 14px; }
+    .welcome { padding-top: 44px; text-align: center; }
+    .welcome-art {
+      width: 214px; height: 214px; margin: 0 auto 26px; border-radius: 50%; background: var(--blush);
+      display: grid; place-items: center; position: relative;
+    }
+    .welcome-art::before, .welcome-art::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(186,139,49,.45); }
+    .welcome-art::before { width: 180px; height: 180px; }
+    .welcome-art::after { width: 245px; height: 245px; }
+    .welcome .lead { max-width: 350px; margin-left: auto; margin-right: auto; }
+    .choice-list { display: grid; gap: 11px; }
+    .choice-list.compact { gap: 8px; }
+    .choice-list.compact .choice { min-height: 54px; padding-top: 9px; padding-bottom: 9px; }
+    .choice-list.compact .choice-icon { width: 36px; height: 36px; border-radius: 12px; }
+    .choice {
+      width: 100%; min-height: 69px; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--surface); padding: 13px 14px; text-align: left;
+      display: grid; grid-template-columns: 44px 1fr 24px; align-items: center; gap: 12px;
+    }
+    .choice .choice-icon { width: 44px; height: 44px; border-radius: 14px; background: var(--blush); color: var(--rose-dark); display: grid; place-items: center; }
+    .choice:nth-child(even) .choice-icon { background: var(--gold-soft); color: var(--gold); }
+    .choice strong { display: block; font-size: 14px; }
+    .choice small { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .choice .tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #d9c7c1; }
+    .choice.selected { border-color: var(--rose); background: #fff7f8; box-shadow: 0 8px 24px rgba(184,136,112,.1); }
+    .choice.selected .tick { border-color: var(--rose-dark); background: var(--rose-dark); position: relative; }
+    .choice.selected .tick::after { content: ""; position: absolute; width: 8px; height: 4px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg); left: 6px; top: 6px; }
+    .location-card { padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 14px 36px rgba(105,69,57,.08); }
+    .location-pin { width: 74px; height: 74px; border-radius: 50%; background: var(--blush); color: var(--rose-dark); display: grid; place-items: center; margin: 4px auto 17px; }
+    .locate-btn { width: 100%; border: 0; border-radius: 13px; background: var(--rose-dark); color: white; padding: 14px; font-weight: 800; }
+    .or { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin: 18px 0; color: var(--muted); font-size: 11px; }
+    .or::before, .or::after { content: ""; height: 1px; background: var(--line); }
+    .field { margin-top: 14px; }
+    .field label { display: block; margin-bottom: 7px; font-size: 11px; font-weight: 800; }
+    .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 13px; padding: 13px 14px; }
+    .field input, .field select { height: 51px; }
+    .field textarea { resize: none; min-height: 86px; }
+    .account-card { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 14px 36px rgba(105,69,57,.08); }
+    .social-stack { display: grid; gap: 10px; }
+    .social-btn { width: 100%; height: 52px; border-radius: 13px; padding: 0 16px; display: grid; grid-template-columns: 24px 1fr 24px; align-items: center; font-weight: 800; }
+    .social-btn svg { justify-self: center; }
+    .social-btn span { grid-column: 2; }
+    .apple-btn { border: 0; background: #191514; color: #fff; }
+    .google-btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 64px; }
+    .password-toggle { position: absolute; right: 8px; top: 8px; height: 35px; border: 0; background: transparent; color: var(--rose-dark); font-size: 10px; font-weight: 800; }
+    .account-note { margin: 14px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; text-align: center; }
+    .early-access { margin: 0 0 18px; padding: 12px 14px; border-radius: 13px; background: var(--gold-soft); color: #6f501d; font-size: 12px; font-weight: 800; text-align: center; }
+    .signup-status { min-height: 21px; margin: 15px 0 0; color: var(--rose-dark); font-size: 12px; font-weight: 800; line-height: 1.5; text-align: center; }
+    .signup-status.error { color: #a14545; }
+    .privacy { display: flex; gap: 9px; color: var(--muted); font-size: 11px; margin-top: 15px; align-items: flex-start; }
+    .age-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 19px; padding: 20px; }
+    .age-display { font-family: "Cormorant Garamond", serif; font-size: 38px; text-align: center; margin-bottom: 12px; }
+    input[type="range"] { width: 100%; accent-color: var(--rose-dark); }
+    .range-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 10px; margin-top: 5px; }
+    .pill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pill {
+      min-height: 76px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); padding: 13px 10px;
+      text-align: center; font-size: 12px; font-weight: 800;
+    }
+    .pill svg { display: block; margin: 0 auto 7px; color: var(--rose); }
+    .pill.selected { background: var(--blush); color: var(--rose-dark); border-color: var(--rose); }
+    .profile-photo-row { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: center; margin-bottom: 18px; }
+    .photo-box { width: 92px; height: 92px; border-radius: 50%; background: var(--blush); border: 1px dashed var(--rose); display: grid; place-items: center; overflow: hidden; color: var(--rose-dark); }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .photo-copy strong { display: block; font-family: "Cormorant Garamond", serif; font-size: 24px; }
+    .photo-copy label { color: var(--rose-dark); font-size: 12px; font-weight: 800; cursor: pointer; }
+    .photo-copy input { display: none; }
+    .safety-card { border: 1px solid var(--line); background: var(--surface); border-radius: 18px; padding: 18px; margin-bottom: 12px; display: grid; grid-template-columns: 38px 1fr; gap: 12px; }
+    .safety-card span { width: 38px; height: 38px; border-radius: 50%; background: var(--gold-soft); color: var(--gold); display: grid; place-items: center; font-weight: 900; }
+    .safety-card strong { display: block; font-size: 13px; }
+    .safety-card p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+    .promise { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px; display: flex; gap: 11px; align-items: center; text-align: left; font-weight: 700; font-size: 12px; }
+    .promise .box { width: 23px; height: 23px; border: 1.5px solid var(--rose); border-radius: 7px; flex: 0 0 auto; }
+    .promise.selected .box { background: var(--rose-dark); position: relative; }
+    .promise.selected .box::after { content: ""; position: absolute; width: 9px; height: 5px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg); left: 6px; top: 6px; }
+    .flow-foot {
+      position: absolute; z-index: 10; left: 0; right: 0; bottom: 0;
+      padding: 16px 24px max(20px, env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, var(--paper) 74%, rgba(255,250,250,0));
+    }
+    .next-btn { width: 100%; height: 54px; border: 0; border-radius: 16px; background: var(--rose-dark); color: white; font-weight: 800; box-shadow: 0 11px 28px rgba(142,90,72,.22); }
+    .next-btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+    .validation { min-height: 17px; margin: 0 0 4px; text-align: center; color: #a14545; font-size: 11px; }
+    .success { text-align: center; padding-top: 34px; }
+    .success-mark { width: 112px; height: 112px; border-radius: 50%; background: var(--blush); margin: 0 auto 28px; display: grid; place-items: center; color: var(--rose-dark); border: 1px solid var(--pink); }
+    .summary-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin: 22px 0; }
+    .summary-chips span { padding: 7px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 700; }
+
+    /* Signed-in app */
+    .app-shell { display: none; min-height: 100dvh; background: var(--paper); padding-bottom: 86px; }
+    .app-shell.active { display: block; }
+    .app-head { padding: max(20px, env(safe-area-inset-top)) 20px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .app-head h1 { margin: 0; font-family: "Cormorant Garamond", serif; font-size: 30px; font-weight: 600; }
+    .round-btn { width: 41px; height: 41px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--gold); }
+    .app-view { display: none; padding: 8px 18px 24px; }
+    .app-view.active { display: block; }
+    .discovery-tools { display: grid; grid-template-columns: 1fr 48px; gap: 9px; margin-bottom: 13px; }
+    .state-select { width: 100%; height: 48px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 0 13px; font-weight: 700; }
+    .filter-btn { border: 0; border-radius: 14px; background: var(--rose-dark); color: white; display: grid; place-items: center; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 17px; }
+    .chip { white-space: nowrap; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .chip.active { background: var(--gold); color: white; border-color: var(--gold); }
+    .profile-card { border-radius: 22px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; box-shadow: 0 15px 36px rgba(105,69,57,.1); }
+    .portrait { height: min(37vh, 320px); position: relative; overflow: hidden; background: var(--blush); }
+    .portrait svg { width: 100%; height: 100%; display: block; }
+    .sample { position: absolute; top: 13px; left: 13px; padding: 6px 9px; border-radius: 99px; background: rgba(73,44,36,.78); color: white; font-size: 9px; font-weight: 800; letter-spacing: .06em; }
+    .card-body { padding: 17px; }
+    .card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .card-title h2 { margin: 0; font-family: "Cormorant Garamond", serif; font-size: 31px; }
+    .card-title span { color: var(--gold); font-size: 11px; font-weight: 800; }
+    .card-body p { margin: 3px 0 12px; color: var(--muted); font-size: 12px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { background: var(--blush); color: var(--rose-dark); padding: 6px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+    .card-actions { display: grid; grid-template-columns: 48px 1fr; gap: 9px; margin-top: 15px; }
+    .card-actions button { height: 48px; border-radius: 14px; font-weight: 800; }
+    .pass { border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+    .connect { border: 0; background: var(--rose-dark); color: white; }
+    .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+    .empty h2 { color: var(--ink); font-family: "Cormorant Garamond", serif; font-size: 31px; margin: 0 0 8px; }
+    .activity-list { display: grid; gap: 12px; }
+    .activity { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: 16px; display: grid; grid-template-columns: 52px 1fr auto; gap: 13px; align-items: center; }
+    .activity .a-icon { width: 52px; height: 52px; border-radius: 15px; background: var(--blush); color: var(--rose-dark); display: grid; place-items: center; }
+    .activity:nth-child(even) .a-icon { background: var(--gold-soft); color: var(--gold); }
+    .activity h3 { margin: 0; font-family: "Cormorant Garamond", serif; font-size: 22px; }
+    .activity p { margin: 2px 0 0; color: var(--muted); font-size: 10px; }
+    .activity button { border: 0; background: transparent; color: var(--rose-dark); font-weight: 900; font-size: 18px; }
+    .community-intro { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 15px; }
+    .community-intro p { margin: 0; color: var(--muted); font-size: 11px; max-width: 245px; }
+    .new-post-btn { flex: 0 0 auto; border: 0; border-radius: 13px; background: var(--rose-dark); color: white; padding: 11px 13px; font-size: 11px; font-weight: 800; }
+    .feed-list { display: grid; gap: 12px; }
+    .post { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); padding: 16px; }
+    .post-head { display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; }
+    .post-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--blush); color: var(--rose-dark); display: grid; place-items: center; font-family: "Cormorant Garamond", serif; font-size: 20px; font-weight: 600; }
+    .post-author strong { display: block; font-size: 12px; }
+    .post-author small, .post-time { color: var(--muted); font-size: 9px; }
+    .post-category { display: inline-block; margin: 13px 0 7px; padding: 5px 8px; border-radius: 7px; background: var(--gold-soft); color: #805d1d; font-size: 9px; font-weight: 800; }
+    .post-copy { margin: 0; font-size: 12px; line-height: 1.55; }
+    .post-actions { display: flex; gap: 8px; margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--line); }
+    .post-actions button { border: 0; background: transparent; color: var(--muted); padding: 3px 2px; font-size: 10px; font-weight: 800; }
+    .post-actions button.liked { color: var(--rose-dark); }
+    .post-note { margin: 12px 0 0; color: var(--muted); font-size: 9px; text-align: center; }
+    .comment-list { display: grid; gap: 10px; margin-bottom: 16px; }
+    .comment { background: var(--paper); border-radius: 13px; padding: 11px 12px; }
+    .comment strong { display: block; font-size: 10px; }
+    .comment p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+    .comment-compose { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .comment-compose input { min-width: 0; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 0 12px; }
+    .comment-compose button { border: 0; border-radius: 12px; background: var(--rose-dark); color: white; padding: 0 14px; font-size: 10px; font-weight: 800; }
+    .my-profile { text-align: center; padding: 18px 16px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+    .avatar { width: 96px; height: 96px; border-radius: 50%; background: var(--blush); color: var(--rose-dark); display: grid; place-items: center; margin: 0 auto 12px; font-family: "Cormorant Garamond", serif; font-size: 36px; overflow: hidden; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .my-profile h2 { margin: 0; font-family: "Cormorant Garamond", serif; font-size: 31px; }
+    .my-profile p { margin: 4px 0 13px; color: var(--muted); font-size: 12px; }
+    .restart { margin-top: 18px; border: 0; background: transparent; color: var(--rose-dark); text-decoration: underline; font-size: 11px; font-weight: 700; }
+    .bottom-nav { position: fixed; left: 50%; right: auto; bottom: 0; transform: translateX(-50%); width: min(100%, 480px); z-index: 20; min-height: 72px; padding: 7px 10px max(7px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(255,255,255,.97); display: grid; grid-template-columns: repeat(4,1fr); }
+    .nav-btn { border: 0; background: transparent; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 9px; font-weight: 800; }
+    .nav-btn.active { color: var(--rose-dark); }
+    .sheet-wrap { position: absolute; inset: 0; z-index: 40; background: rgba(48,30,25,.5); display: none; align-items: end; }
+    .sheet-wrap.open { display: flex; }
+    .sheet { width: 100%; max-height: 80%; overflow-y: auto; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 20px 30px; }
+    .sheet h2 { margin: 0 0 5px; font-family: "Cormorant Garamond", serif; font-size: 32px; }
+    .sheet > p { margin: 0 0 18px; color: var(--muted); font-size: 12px; }
+    .sheet-close { float: right; border: 1px solid var(--line); border-radius: 50%; width: 38px; height: 38px; background: var(--paper); }
+    .toast { position: absolute; z-index: 60; bottom: 90px; left: 50%; transform: translate(-50%, 14px); background: var(--ink); color: white; padding: 10px 14px; border-radius: 99px; opacity: 0; pointer-events: none; transition: .2s; font-size: 11px; font-weight: 800; }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+    @media (min-width: 700px) {
+      body { padding: 24px 0; }
+      .phone { min-height: calc(100dvh - 48px); border-radius: 30px; border: 1px solid #e8d7d1; }
+      .onboarding, .app-shell { min-height: calc(100dvh - 48px); }
+      .bottom-nav { bottom: 24px; }
+      .flow-foot { position: absolute; }
+    }
+    @media (max-width: 480px) { body { background: var(--paper); } .phone { box-shadow: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <main class="onboarding" id="onboarding">
+      <header class="flow-head">
+        <button class="back-btn" id="backBtn" type="button" aria-label="Go back" hidden>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 5-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div><div class="progress" aria-hidden="true"><span id="progressBar"></span></div><div class="step-count" id="stepCount"></div></div>
+        <button class="skip-btn" id="skipBtn" type="button" hidden>Skip</button>
+      </header>
+
+      <div class="steps">
+        <section class="step welcome active" data-step="0" data-required="false">
+          <div class="welcome-art" aria-hidden="true">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none"><path d="M29 88c3-29 15-44 32-44s29 15 32 44" fill="#b88870"/><ellipse cx="61" cy="43" rx="24" ry="29" fill="#fff1ed"/><path d="M35 46c0-31 12-44 27-44 18 0 30 17 30 47-9-11-17-17-25-20-9 9-20 14-32 17Z" fill="#9b6554"/><path d="M37 48c2 22 10 33 24 34 15 0 24-11 27-34 5 8 7 17 7 29v26H27V77c0-12 3-21 10-29Z" fill="#9b6554"/><path d="M52 46c2 2 5 2 7 0M67 46c2 2 5 2 7 0M57 61c3 3 7 3 10 0" stroke="#b88870" stroke-width="2" stroke-linecap="round"/><path d="m31 16 5-8 5 8M82 18l5-8 5 8" stroke="#ba8b31" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p class="step-kicker">Welcome, princess</p>
+          <h1>Find your girls. <em>Build your circle.</em></h1>
+          <p class="lead">A warm place for friendship, sisterhood and real connections — from coffee plans to the community you’ve been looking for.</p>
+        </section>
+
+        <section class="step" data-step="1" data-required="account">
+          <p class="step-kicker">Founding members</p><h1>Be first in when we <em>launch.</em></h1>
+          <p class="lead">Join the founding-member list now, then continue through the Princesses preview.</p>
+          <form class="account-card" id="founderForm" novalidate>
+            <p class="early-access">Free during early access. Be first in when we launch.</p>
+            <div class="field"><label for="emailInput">Email</label><input id="emailInput" type="email" maxlength="120" placeholder="you@example.com" autocomplete="email" inputmode="email" required></div>
+            <div class="field"><label for="founderNameInput">Name <span style="font-weight:500;color:var(--muted)">(optional)</span></label><input id="founderNameInput" type="text" maxlength="80" placeholder="Your name" autocomplete="name"></div>
+            <p class="account-note">We’ll use your email to tell you when Princesses launches.</p>
+            <p class="signup-status" id="signupStatus" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="step" data-step="2" data-required="location">
+          <p class="step-kicker">Your area</p><h1>Where should we find your <em>circle?</em></h1>
+          <p class="lead">Use your phone location for nearby matches, or choose your city yourself.</p>
+          <div class="location-card">
+            <div class="location-pin"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.4 7-12A7 7 0 1 0 5 9c0 6.6 7 12 7 12Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg></div>
+            <button class="locate-btn" id="locateBtn" type="button">Allow location</button>
+            <div class="or">or enter it manually</div>
+            <div class="field"><label for="cityInput">City</label><input id="cityInput" type="text" maxlength="34" placeholder="Your city" autocomplete="address-level2"></div>
+            <div class="field"><label for="stateInput">State</label><select id="stateInput" aria-label="Choose your state"></select></div>
+          </div>
+          <div class="privacy"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8"/></svg><span>Your exact location is never shown. Other members only see your city and approximate distance.</span></div>
+        </section>
+
+        <section class="step" data-step="3" data-required="choice" data-group="meetTypes">
+          <p class="step-kicker">Your people</p><h1>Who would you love to <em>meet?</em></h1>
+          <p class="lead">Choose as many as you like. This shapes the introductions you see first.</p>
+          <div class="choice-list" id="meetTypes">
+            <button class="choice" type="button" data-value="New friends"><span class="choice-icon">♡</span><span><strong>New friends</strong><small>Build a genuine local circle</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Girls to go out with"><span class="choice-icon">◇</span><span><strong>Girls to go out with</strong><small>Brunch, shopping, events and fun plans</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Activity partners"><span class="choice-icon">↗</span><span><strong>Activity partners</strong><small>Do the things you already love together</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Roommates"><span class="choice-icon">⌂</span><span><strong>Roommates</strong><small>Find a compatible home fit</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Study or business circle"><span class="choice-icon">✦</span><span><strong>Study or business circle</strong><small>Learn, cowork and grow together</small></span><span class="tick"></span></button>
+          </div>
+        </section>
+
+        <section class="step" data-step="4" data-required="age">
+          <p class="step-kicker">Age preference</p><h1>What age range feels <em>right?</em></h1>
+          <p class="lead">We’ll prioritize women in this range. You can change it any time.</p>
+          <div class="age-wrap">
+            <div class="age-display"><span id="ageMinText">22</span> – <span id="ageMaxText">38</span></div>
+            <label class="field" for="ageMin">Youngest</label><input id="ageMin" type="range" min="18" max="65" value="22" aria-label="Youngest age">
+            <label class="field" for="ageMax">Oldest</label><input id="ageMax" type="range" min="18" max="65" value="38" aria-label="Oldest age">
+            <div class="range-labels"><span>18</span><span>65+</span></div>
+          </div>
+        </section>
+
+        <section class="step" data-step="5" data-required="choice" data-group="activities">
+          <p class="step-kicker">Your interests</p><h1>What sounds fun <em>together?</em></h1>
+          <p class="lead">Pick at least three so we can find easy conversation starters.</p>
+          <div class="pill-grid" id="activities">
+            <button class="pill" type="button" data-value="Coffee"><span>○</span><br>Coffee & brunch</button>
+            <button class="pill" type="button" data-value="Shopping"><span>◇</span><br>Shopping</button>
+            <button class="pill" type="button" data-value="Walking"><span>↗</span><br>Walking</button>
+            <button class="pill" type="button" data-value="Fitness"><span>○</span><br>Fitness & Pilates</button>
+            <button class="pill" type="button" data-value="Books"><span>□</span><br>Books & study</button>
+            <button class="pill" type="button" data-value="Business"><span>✦</span><br>Business</button>
+            <button class="pill" type="button" data-value="Travel"><span>⌁</span><br>Travel</button>
+            <button class="pill" type="button" data-value="Food"><span>♡</span><br>Food & cooking</button>
+            <button class="pill" type="button" data-value="Events"><span>☆</span><br>Events</button>
+            <button class="pill" type="button" data-value="Faith"><span>☆</span><br>Faith & community</button>
+          </div>
+        </section>
+
+        <section class="step" data-step="6" data-required="choice" data-group="purpose">
+          <p class="step-kicker">What matters</p><h1>What brought you here <em>today?</em></h1>
+          <p class="lead">A little context helps us introduce you to women looking for the same thing.</p>
+          <div class="choice-list" id="purpose">
+            <button class="choice single" type="button" data-value="New to the area"><span class="choice-icon">⌖</span><span><strong>I’m new to the area</strong><small>I want a local circle that feels familiar</small></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Expand my circle"><span class="choice-icon">♡</span><span><strong>I want to expand my circle</strong><small>More meaningful friendships and plans</small></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Life transition"><span class="choice-icon">↗</span><span><strong>I’m in a new life chapter</strong><small>A move, new job, marriage or fresh start</small></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Specific plan"><span class="choice-icon">◇</span><span><strong>I’m looking for a specific plan</strong><small>A roommate, activity or accountability buddy</small></span><span class="tick"></span></button>
+          </div>
+        </section>
+
+        <section class="step" data-step="7" data-required="choice" data-group="meetStyle">
+          <p class="step-kicker">Your comfort</p><h1>How do you like to <em>connect?</em></h1>
+          <p class="lead">We’ll use this to suggest people whose pace feels natural to you.</p>
+          <div class="choice-list" id="meetStyle">
+            <button class="choice" type="button" data-value="Message first"><span class="choice-icon">···</span><span><strong>Message first</strong><small>Chat a little before making plans</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Public meetup"><span class="choice-icon">⌖</span><span><strong>Public meetup</strong><small>Coffee or a daytime plan</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Group plans"><span class="choice-icon">♢</span><span><strong>Group plans</strong><small>I feel best meeting several women</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Voice or video"><span class="choice-icon">○</span><span><strong>Voice or video first</strong><small>A quick hello before meeting</small></span><span class="tick"></span></button>
+          </div>
+        </section>
+
+        <section class="step" data-step="8" data-required="false" data-group="religion">
+          <p class="step-kicker">About you · Optional</p><h1>What is your <em>religion?</em></h1>
+          <p class="lead">Share only if you want to. This can help you find women with a similar faith or outlook.</p>
+          <div class="choice-list compact" id="religion">
+            <button class="choice single" type="button" data-value="Muslim"><span class="choice-icon">M</span><span><strong>Muslim</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Christian"><span class="choice-icon">C</span><span><strong>Christian</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Jewish"><span class="choice-icon">J</span><span><strong>Jewish</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Hindu"><span class="choice-icon">H</span><span><strong>Hindu</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Buddhist"><span class="choice-icon">B</span><span><strong>Buddhist</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Sikh"><span class="choice-icon">S</span><span><strong>Sikh</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Spiritual"><span class="choice-icon">○</span><span><strong>Spiritual</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Other"><span class="choice-icon">◇</span><span><strong>Other</strong></span><span class="tick"></span></button>
+            <button class="choice single" type="button" data-value="Prefer not to say"><span class="choice-icon">—</span><span><strong>Prefer not to say</strong></span><span class="tick"></span></button>
+          </div>
+          <div class="privacy"><span>You can skip this or choose Prefer not to say. You can change your answer later.</span></div>
+        </section>
+
+        <section class="step" data-step="9" data-required="profile">
+          <p class="step-kicker">Your profile</p><h1>Let them meet the <em>real you.</em></h1>
+          <p class="lead">A warm, simple profile is enough to start.</p>
+          <div class="profile-photo-row">
+            <div class="photo-box"><img id="profilePhotoPreview" alt="Your selected profile photo"><svg id="photoPlaceholder" width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-4 3-6 7-6s6.5 2 7 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+            <div class="photo-copy"><strong>Add your photo</strong><label for="profilePhoto">Choose from your phone</label><input id="profilePhoto" type="file" accept="image/png,image/jpeg,image/webp"></div>
+          </div>
+          <div class="field"><label for="nameInput">First name</label><input id="nameInput" type="text" maxlength="24" placeholder="Your first name" autocomplete="given-name"></div>
+          <div class="field"><label for="birthAge">Your age</label><input id="birthAge" type="number" min="18" max="99" placeholder="18+"></div>
+          <div class="field"><label for="bioInput">A short hello</label><textarea id="bioInput" maxlength="150" placeholder="What should a new friend know about you?"></textarea></div>
+        </section>
+
+        <section class="step" data-step="10" data-required="promise">
+          <p class="step-kicker">Community promise</p><h1>A beautiful space starts with <em>trust.</em></h1>
+          <p class="lead">Every member agrees to the same essentials before entering.</p>
+          <div class="safety-card"><span>1</span><div><strong>Women 18+ only</strong><p>A production version would require age and identity verification before access.</p></div></div>
+          <div class="safety-card"><span>2</span><div><strong>Privacy stays yours</strong><p>Your phone, email and exact location are never public.</p></div></div>
+          <div class="safety-card"><span>3</span><div><strong>Kindness is required</strong><p>Harassment, hate and misrepresentation are not welcome here.</p></div></div>
+          <button class="promise" id="promiseBtn" type="button"><span class="box"></span><span>I’m 18+ and I promise to treat every woman here with respect.</span></button>
+        </section>
+
+        <section class="step" data-step="11" data-required="false">
+          <p class="step-kicker">Stay in the loop</p><h1>Which moments should we <em>tell you about?</em></h1>
+          <p class="lead">Choose what feels useful. You can change this later.</p>
+          <div class="choice-list" id="notifications">
+            <button class="choice" type="button" data-value="New matches"><span class="choice-icon">♡</span><span><strong>New matches</strong><small>When someone fits your preferences</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Messages"><span class="choice-icon">···</span><span><strong>Messages</strong><small>When a connection reaches out</small></span><span class="tick"></span></button>
+            <button class="choice" type="button" data-value="Nearby plans"><span class="choice-icon">⌖</span><span><strong>Nearby plans</strong><small>Relevant circles and group activities</small></span><span class="tick"></span></button>
+          </div>
+          <div class="privacy"><span>This demo does not request notification permission. The real app would ask your phone only after you finish.</span></div>
+        </section>
+
+        <section class="step success" data-step="12" data-required="false">
+          <div class="success-mark"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.1 7 10 4.1-1.9 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8.8 12 2 2 4.5-4.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p class="step-kicker">You’re ready</p><h1>Your circle is waiting, <em id="readyName">princess.</em></h1>
+          <p class="lead">We’ll start with women who share your interests and match the way you like to connect.</p>
+          <div class="summary-chips" id="summaryChips"></div>
+        </section>
+      </div>
+
+      <footer class="flow-foot"><p class="validation" id="validation" aria-live="polite"></p><button class="next-btn" id="nextBtn" type="button">Begin</button></footer>
+    </main>
+
+    <main class="app-shell" id="appShell">
+      <header class="app-head"><h1 id="appTitle">Explore</h1><button class="round-btn" id="safetyBtn" type="button" aria-label="Open safety center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.1 7 10 4.1-1.9 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8"/><path d="m9.3 12 1.8 1.8 3.8-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></header>
+      <section class="app-view active" id="exploreView">
+        <div class="discovery-tools"><select class="state-select" id="exploreState" aria-label="Choose a state"></select><button class="filter-btn" id="filterBtn" type="button" aria-label="Open filters"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h10M18 7h2M4 17h3M11 17h9M14 4v6M7 14v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+        <div class="chips" id="chips"><button class="chip active" data-filter="all">For you</button><button class="chip" data-filter="friendship">Friends</button><button class="chip" data-filter="coffee">Going out</button><button class="chip" data-filter="walking">Activities</button><button class="chip" data-filter="roommate">Roommates</button><button class="chip" data-filter="study">Study</button></div>
+        <div id="profileDeck"></div>
+      </section>
+      <section class="app-view" id="activitiesView"><div class="activity-list">
+        <article class="activity"><span class="a-icon">○</span><div><h3>Coffee & brunch</h3><p>Easy first hellos nearby</p></div><button data-activity="coffee">›</button></article>
+        <article class="activity"><span class="a-icon">↗</span><div><h3>Walking & wellness</h3><p>Find someone who keeps the plan</p></div><button data-activity="walking">›</button></article>
+        <article class="activity"><span class="a-icon">□</span><div><h3>Study & coworking</h3><p>Quiet company and shared goals</p></div><button data-activity="study">›</button></article>
+        <article class="activity"><span class="a-icon">⌂</span><div><h3>Roommate search</h3><p>Compare home-life preferences</p></div><button data-activity="roommate">›</button></article>
+      </div></section>
+      <section class="app-view" id="communityView">
+        <div class="community-intro"><p>Ask for a recommendation, a companion, advice, or support from women nearby.</p><button class="new-post-btn" id="newPostBtn" type="button">+ New post</button></div>
+        <div class="feed-list" id="feedList"></div>
+        <p class="post-note">Demo posts and replies reset when this page closes.</p>
+      </section>
+      <section class="app-view" id="profileView"><div class="my-profile"><div class="avatar"><img id="myAvatar" alt="Your profile photo"><span id="myInitial">P</span></div><h2 id="myName">Princess</h2><p id="myLocation">Your city</p><div class="tags" id="myTags" style="justify-content:center"></div><button class="restart" id="restartBtn" type="button">Replay onboarding demo</button></div></section>
+      <nav class="bottom-nav" aria-label="App sections"><button class="nav-btn active" data-view="exploreView" data-title="Explore"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8"/></svg>Explore</button><button class="nav-btn" data-view="activitiesView" data-title="Activities"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M6 20v-3.5C6 14.6 7.6 13 9.5 13h5c1.9 0 3.5 1.6 3.5 3.5V20M12 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/></svg>Circles</button><button class="nav-btn" data-view="communityView" data-title="Community"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M5 5h14v11H9l-4 3V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Community</button><button class="nav-btn" data-view="profileView" data-title="Your profile"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c.5-4 3-6 7-6s6.5 2 7 6" stroke="currentColor" stroke-width="1.8"/></svg>Profile</button></nav>
+    </main>
+
+    <div class="sheet-wrap" id="sheetWrap"><div class="sheet"><button class="sheet-close" id="sheetClose" type="button" aria-label="Close">×</button><h2 id="sheetTitle">Filters</h2><p id="sheetLead">Choose who you would like to see.</p><div id="sheetContent"></div></div></div>
+    <div class="toast" id="toast" aria-live="polite"></div>
+  </div>
+<script>
+  var states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
+  var religions = ["Muslim","Christian","Jewish","Hindu","Buddhist","Sikh","Spiritual","Other","Prefer not to say"];
+  var data = { email:"", founderName:"", city:"", state:"New York", meetTypes:[], activities:[], purpose:[], meetStyle:[], religion:"", notifications:[], name:"", age:"", bio:"", photo:"" };
+  var currentStep = 0;
+  var founderSignupComplete = false;
+  var founderSignupPending = false;
+  var totalSteps = document.querySelectorAll('.step').length;
+  var stepNames = ["Welcome","Founding member","Location","Who you want to meet","Age preference","Activities","Purpose","Meet style","Religion","Your profile","Safety promise","Notifications","Ready"];
+
+  function optionsHtml(){ return states.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join(''); }
+  document.getElementById('stateInput').innerHTML = optionsHtml();
+  document.getElementById('exploreState').innerHTML = optionsHtml();
+  document.getElementById('stateInput').value = data.state;
+  document.getElementById('exploreState').value = data.state;
+
+  function updateFlow(){
+    Array.prototype.forEach.call(document.querySelectorAll('.step'), function(s){ s.classList.toggle('active', Number(s.dataset.step) === currentStep); });
+    document.getElementById('backBtn').hidden = currentStep === 0 || currentStep === totalSteps - 1;
+    document.getElementById('skipBtn').hidden = currentStep !== 8 && currentStep !== 11;
+    var pct = currentStep === 0 ? 0 : (currentStep / (totalSteps - 1)) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('stepCount').textContent = currentStep === 0 ? '' : stepNames[currentStep] + ' · ' + currentStep + ' of ' + (totalSteps - 1);
+    document.getElementById('validation').textContent = '';
+    document.getElementById('nextBtn').textContent = currentStep === 0 ? 'Begin' : currentStep === 1 ? (founderSignupComplete ? 'Continue onboarding' : 'Join as a founding member') : currentStep === totalSteps - 1 ? 'Enter Princesses' : currentStep === 11 ? 'Finish my profile' : 'Continue';
+    var active = document.querySelector('.step.active'); if (active) active.scrollTop = 0;
+  }
+  function selectedValues(id){ return Array.prototype.map.call(document.querySelectorAll('#'+id+' .selected'), function(el){ return el.dataset.value; }); }
+  function validateStep(){
+    var message = '';
+    if (currentStep === 1) {
+      var emailInput = document.getElementById('emailInput');
+      data.email = emailInput.value.trim().toLowerCase();
+      data.founderName = document.getElementById('founderNameInput').value.trim();
+      if (!data.email || !emailInput.checkValidity()) message = 'Enter a valid email address.';
+    }
+    if (currentStep === 2) {
+      data.city = document.getElementById('cityInput').value.trim(); data.state = document.getElementById('stateInput').value;
+      if (!data.city) message = 'Add your city or allow location to continue.';
+    }
+    if (currentStep === 3) { data.meetTypes = selectedValues('meetTypes'); if (!data.meetTypes.length) message = 'Choose at least one type of connection.'; }
+    if (currentStep === 5) { data.activities = selectedValues('activities'); if (data.activities.length < 3) message = 'Choose at least three activities.'; }
+    if (currentStep === 6) { data.purpose = selectedValues('purpose'); if (!data.purpose.length) message = 'Choose what brought you here.'; }
+    if (currentStep === 7) { data.meetStyle = selectedValues('meetStyle'); if (!data.meetStyle.length) message = 'Choose at least one way to connect.'; }
+    if (currentStep === 8) data.religion = selectedValues('religion')[0] || '';
+    if (currentStep === 9) {
+      data.name = document.getElementById('nameInput').value.trim(); data.age = document.getElementById('birthAge').value; data.bio = document.getElementById('bioInput').value.trim();
+      if (!data.name) message = 'Add your first name.'; else if (!data.age || Number(data.age) < 18 || Number(data.age) > 99) message = 'This community is for women 18 and older.'; else if (!data.bio) message = 'Add a short hello so members can know you.';
+    }
+    if (currentStep === 10 && !document.getElementById('promiseBtn').classList.contains('selected')) message = 'Accept the community promise to continue.';
+    document.getElementById('validation').textContent = message;
+    return !message;
+  }
+  function setSignupStatus(message, isError){
+    var status = document.getElementById('signupStatus');
+    status.textContent = message;
+    status.classList.toggle('error', Boolean(isError));
+  }
+  function submitFounderSignup(){
+    if (founderSignupPending) return;
+    founderSignupPending = true;
+    var nextButton = document.getElementById('nextBtn');
+    nextButton.disabled = true;
+    nextButton.textContent = 'Joining…';
+    setSignupStatus('', false);
+    fetch('https://qcnunkxfgtzhlfujtfqe.supabase.co/rest/v1/princesses_founders', {
+      method: 'POST',
+      headers: {
+        'apikey': 'sb_publishable_2mYS-LcTenBS2cjYOKp4iA_72FufXAw',
+        'Authorization': 'Bearer sb_publishable_2mYS-LcTenBS2cjYOKp4iA_72FufXAw',
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: data.email, name: data.founderName })
+    }).then(function(response){
+      if (response.ok) {
+        founderSignupComplete = true;
+        setSignupStatus("You're in! You're a founding member — we'll email you the moment the app launches.", false);
+        return;
+      }
+      return response.json().catch(function(){ return {}; }).then(function(error){
+        if (error && error.code === '23505') {
+          founderSignupComplete = true;
+          setSignupStatus("You're already on the list!", false);
+          return;
+        }
+        setSignupStatus('Something went wrong — please try again.', true);
+      });
+    }).catch(function(){
+      setSignupStatus('Something went wrong — please try again.', true);
+    }).then(function(){
+      founderSignupPending = false;
+      nextButton.disabled = false;
+      nextButton.textContent = founderSignupComplete ? 'Continue onboarding' : 'Join as a founding member';
+    });
+  }
+  document.getElementById('nextBtn').addEventListener('click', function(){
+    if (currentStep === totalSteps - 1) { enterApp(); return; }
+    if (!validateStep()) return;
+    if (currentStep === 1 && !founderSignupComplete) { submitFounderSignup(); return; }
+    if (currentStep === 11) data.notifications = selectedValues('notifications');
+    currentStep += 1;
+    if (currentStep === totalSteps - 1) prepareSummary();
+    updateFlow();
+  });
+  document.getElementById('founderForm').addEventListener('submit', function(event){
+    event.preventDefault();
+    if (currentStep === 1) document.getElementById('nextBtn').click();
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ if (currentStep > 0) { currentStep -= 1; updateFlow(); } });
+  document.getElementById('skipBtn').addEventListener('click', function(){
+    if (currentStep === 8) { data.religion=''; currentStep=9; updateFlow(); return; }
+    data.notifications=[]; currentStep=12; prepareSummary(); updateFlow();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.choice, .pill'), function(btn){
+    btn.addEventListener('click', function(){
+      if (btn.classList.contains('single')) Array.prototype.forEach.call(btn.parentNode.children, function(x){ x.classList.remove('selected'); });
+      btn.classList.toggle('selected');
+      document.getElementById('validation').textContent='';
+    });
+  });
+  document.getElementById('promiseBtn').addEventListener('click', function(){ this.classList.toggle('selected'); document.getElementById('validation').textContent=''; });
+
+  var ageMin = document.getElementById('ageMin'), ageMax = document.getElementById('ageMax');
+  function updateAges(e){
+    var min = Number(ageMin.value), max = Number(ageMax.value);
+    if (min > max) { if (e && e.target === ageMin) ageMax.value = min; else ageMin.value = max; }
+    document.getElementById('ageMinText').textContent = ageMin.value; document.getElementById('ageMaxText').textContent = ageMax.value;
+  }
+  ageMin.addEventListener('input', updateAges); ageMax.addEventListener('input', updateAges);
+
+  document.getElementById('locateBtn').addEventListener('click', function(){
+    var btn=this; btn.textContent='Requesting permission…';
+    if (!navigator.geolocation) { btn.textContent='Location unavailable — enter city below'; return; }
+    navigator.geolocation.getCurrentPosition(function(){
+      btn.textContent='Location allowed'; btn.style.background='#ba8b31';
+      if (!document.getElementById('cityInput').value) document.getElementById('cityInput').value='Nearby';
+      showToast('Location permission granted');
+    }, function(){ btn.textContent='Could not access location — enter city below'; });
+  });
+
+  document.getElementById('profilePhoto').addEventListener('change', function(e){
+    var file=e.target.files&&e.target.files[0]; if(!file)return; var reader=new FileReader();
+    reader.onload=function(ev){ data.photo=ev.target.result; var img=document.getElementById('profilePhotoPreview'); img.src=data.photo; img.style.display='block'; document.getElementById('photoPlaceholder').style.display='none'; };
+    reader.readAsDataURL(file);
+  });
+  function prepareSummary(){
+    document.getElementById('readyName').textContent = (data.name || 'princess') + '.';
+    var items = [data.city+', '+data.state].concat(data.meetTypes.slice(0,2)).concat(data.activities.slice(0,3));
+    if (data.religion && data.religion !== 'Prefer not to say') items.push(data.religion);
+    document.getElementById('summaryChips').innerHTML = items.filter(Boolean).map(function(x){ return '<span>'+escapeHtml(x)+'</span>'; }).join('');
+  }
+  function enterApp(){
+    document.getElementById('onboarding').style.display='none'; document.getElementById('appShell').classList.add('active');
+    document.getElementById('exploreState').value=data.state; selectedState=data.state;
+    document.getElementById('myName').textContent=(data.name||'Princess')+(data.age?', '+data.age:''); document.getElementById('myLocation').textContent=(data.city||'Your city')+', '+data.state;
+    var profileTags=data.activities.slice(0,4); if(data.religion&&data.religion!=='Prefer not to say')profileTags.push(data.religion);
+    document.getElementById('myTags').innerHTML=profileTags.map(function(x){return '<span class="tag">'+escapeHtml(x)+'</span>';}).join('');
+    document.getElementById('myInitial').textContent=(data.name||'P').charAt(0).toUpperCase();
+    if(data.photo){ var img=document.getElementById('myAvatar'); img.src=data.photo; img.style.display='block'; document.getElementById('myInitial').style.display='none'; }
+    renderProfiles();
+  }
+
+  var profiles=[
+    {name:'Sara',age:27,city:'Queens',state:'New York',distance:'4 mi',religion:'Muslim',tags:['Friendship','Coffee','Bookshops'],keys:['friendship','coffee'],bio:'New to Queens and hoping to find grounded friends for coffee, bookshops, and easy weekend plans.',colors:['#f2d4dc','#b76f7d','#f8e8df'],scarf:'#9e5969',headStyle:'scarf'},
+    {name:'Amina',age:31,city:'Houston',state:'Texas',distance:'7 mi',religion:'Christian',tags:['Walking','Friendship','Pilates'],keys:['walking','friendship'],bio:'I love morning walks, Pilates, trying new cafés, and friendships that feel warm and consistent.',colors:['#f1dfcf','#b88870','#faeee4'],scarf:'#a36d5b',hair:'#4c302b',outfit:'#a36d5b',headStyle:'hair'},
+    {name:'Leila',age:25,city:'Chicago',state:'Illinois',distance:'11 mi',religion:'Jewish',tags:['Roommate','Museums','Cooking'],keys:['roommate'],bio:'Searching for a calm, clean roommate and women who enjoy museums and cooking together.',colors:['#ecd9e3','#a96f89','#f8e8df'],scarf:'#8d5a73',hair:'#5c3a31',outfit:'#8d5a73',headStyle:'hair'},
+    {name:'Mariam',age:29,city:'Los Angeles',state:'California',distance:'14 mi',religion:'Muslim',tags:['Study','Friendship','Business'],keys:['study','friendship'],bio:'Building my own business and would love a focused coworking friend who can also laugh over lunch.',colors:['#f3ded7','#c18b79','#f9ece2'],scarf:'#a86f60',headStyle:'scarf'},
+    {name:'Huda',age:33,city:'Dearborn',state:'Michigan',distance:'18 mi',religion:'Hindu',tags:['Coffee','Walking','Moms'],keys:['coffee','walking'],bio:'Looking for daytime coffee, neighborhood walks, and kind company that understands a full family schedule.',colors:['#f0dfb9','#b78a36','#fae9df'],scarf:'#9b7132',hair:'#31241f',outfit:'#9b7132',headStyle:'hair'},
+    {name:'Noor',age:24,city:'Atlanta',state:'Georgia',distance:'22 mi',religion:'Spiritual',tags:['Friendship','Study','Photography'],keys:['friendship','study'],bio:'Into photography, quiet study sessions, and planning little day trips around the city.',colors:['#ead5d1','#a87868','#f6e6de'],scarf:'#8f6256',hair:'#6e493c',outfit:'#8f6256',headStyle:'hair'}
+  ];
+  var communityPosts=[
+    {id:1,name:'Sara',location:'Queens, NY',category:'Looking for company',text:'Would anyone like to visit a new coffee shop in Astoria this Saturday afternoon? I would love to make it a small group.',likes:12,liked:false,comments:[{name:'Aaliyah',text:'I’m interested! Saturday afternoon works for me.'},{name:'Nadia',text:'Please add me if you make a group chat.'}]},
+    {id:2,name:'Mariam',location:'Los Angeles, CA',category:'Advice wanted',text:'I’m starting a small business and looking for a recommendation for a women-friendly coworking space with day passes.',likes:8,liked:false,comments:[{name:'Hana',text:'I liked The Riveter when I visited—happy to send details.'}]},
+    {id:3,name:'Noor',location:'Atlanta, GA',category:'Need a recommendation',text:'Does anyone know a good beginner photography class or a patient local mentor?',likes:6,liked:false,comments:[]}
+  ];
+  var nextPostId=4;
+  function renderCommunity(){
+    document.getElementById('feedList').innerHTML=communityPosts.map(function(p){
+      return '<article class="post" data-post="'+p.id+'"><div class="post-head"><span class="post-avatar">'+escapeHtml(p.name.charAt(0).toUpperCase())+'</span><span class="post-author"><strong>'+escapeHtml(p.name)+'</strong><small>'+escapeHtml(p.location)+'</small></span><span class="post-time">'+(p.id>=4?'Just now':'SAMPLE')+'</span></div><span class="post-category">'+escapeHtml(p.category)+'</span><p class="post-copy">'+escapeHtml(p.text)+'</p><div class="post-actions"><button class="like-btn '+(p.liked?'liked':'')+'" type="button" data-id="'+p.id+'">♡ '+p.likes+' '+(p.likes===1?'like':'likes')+'</button><button class="comment-btn" type="button" data-id="'+p.id+'">○ '+p.comments.length+' '+(p.comments.length===1?'comment':'comments')+'</button></div></article>';
+    }).join('');
+  }
+  function findPost(id){ return communityPosts.filter(function(p){return p.id===Number(id);})[0]; }
+  document.getElementById('feedList').addEventListener('click',function(e){
+    var like=e.target.closest('.like-btn');
+    if(like){var p=findPost(like.dataset.id);p.liked=!p.liked;p.likes+=p.liked?1:-1;renderCommunity();return;}
+    var comment=e.target.closest('.comment-btn');if(comment)openComments(comment.dataset.id);
+  });
+  document.getElementById('newPostBtn').addEventListener('click',function(){
+    showSheet('What do you need?','Share a clear request so the right women can respond.','<div class="field"><label for="postCategory">Category</label><select id="postCategory"><option>Looking for company</option><option>Advice wanted</option><option>Need a recommendation</option><option>Roommate search</option><option>Borrow or share</option></select></div><div class="field"><label for="postText">Your post</label><textarea id="postText" maxlength="280" placeholder="Tell the community what you need..."></textarea></div><p class="validation" id="postValidation"></p><button class="locate-btn" id="publishPost" type="button">Post to community</button>');
+    setTimeout(function(){document.getElementById('publishPost').onclick=function(){var text=document.getElementById('postText').value.trim();if(!text){document.getElementById('postValidation').textContent='Write what you need before posting.';return;}communityPosts.unshift({id:nextPostId++,name:data.name||'You',location:(data.city||'Your city')+', '+data.state,category:document.getElementById('postCategory').value,text:text,likes:0,liked:false,comments:[]});renderCommunity();closeSheet();showToast('Your post is live in this demo');};},0);
+  });
+  function openComments(id){
+    var p=findPost(id);var comments=p.comments.length?p.comments.map(function(c){return '<div class="comment"><strong>'+escapeHtml(c.name)+'</strong><p>'+escapeHtml(c.text)+'</p></div>';}).join(''):'<div class="comment"><p>No comments yet. Be the first to respond.</p></div>';
+    showSheet('Comments',p.name+' · '+p.category,'<div class="comment-list">'+comments+'</div><div class="comment-compose"><input id="commentText" maxlength="160" placeholder="Write a kind reply" aria-label="Comment"><button id="addComment" type="button">Post</button></div><p class="validation" id="commentValidation"></p>');
+    setTimeout(function(){document.getElementById('addComment').onclick=function(){var input=document.getElementById('commentText'),text=input.value.trim();if(!text){document.getElementById('commentValidation').textContent='Write a reply first.';return;}p.comments.push({name:data.name||'You',text:text});renderCommunity();openComments(id);showToast('Comment added');};},0);
+  }
+  renderCommunity();
+  var selectedState='New York', activeFilter='all', activeReligion='all', profileIndex=0;
+  function portraitSvg(p){
+    var c=p.colors;
+    var base='<svg viewBox="0 0 300 300" role="img" aria-label="Illustrated sample portrait for '+p.name+'"><rect width="300" height="300" fill="'+c[0]+'"/><circle cx="245" cy="55" r="62" fill="'+c[1]+'" opacity=".13"/><circle cx="40" cy="260" r="85" fill="'+c[2]+'" opacity=".7"/>';
+    if(p.headStyle==='hair'){
+      base+='<path d="M75 300c6-79 36-115 78-115s72 36 78 115" fill="'+p.outfit+'"/><path d="M90 151c0-73 26-109 65-109 44 0 73 39 73 111l-15 57-22-92c-19-6-38-4-59 3l-37 91-5-61Z" fill="'+p.hair+'"/><ellipse cx="153" cy="151" rx="52" ry="66" fill="'+c[2]+'"/><path d="M101 143c8-53 27-79 56-79 31 0 51 24 59 73-21-22-42-32-64-32-18 14-35 25-51 38Z" fill="'+p.hair+'"/>';
+    }else{
+      base+='<path d="M75 300c6-79 36-115 78-115s72 36 78 115" fill="'+p.scarf+'"/><ellipse cx="153" cy="147" rx="56" ry="69" fill="'+c[2]+'"/><path d="M91 151c0-72 26-109 64-109 44 0 72 40 72 111-16-23-29-36-42-44-21 23-50 38-94 42Z" fill="'+p.scarf+'"/><path d="M97 155c4 49 23 76 56 77 36 1 56-27 61-78 11 13 16 29 16 49v97H75v-96c0-19 7-36 22-49Z" fill="'+p.scarf+'"/>';
+    }
+    return base+'<path d="M129 151c6 3 12 3 18 0M166 151c6 3 12 3 18 0M146 184c7 5 14 5 21 0" stroke="'+c[1]+'" stroke-width="3" stroke-linecap="round"/></svg>';
+  }
+  function renderProfiles(){
+    var list=profiles.filter(function(p){ return p.state===selectedState && (activeFilter==='all'||p.keys.indexOf(activeFilter)>-1) && (activeReligion==='all'||p.religion===activeReligion); });
+    var deck=document.getElementById('profileDeck');
+    if(!list.length){ deck.innerHTML='<div class="empty"><h2>No sample matches here yet</h2><p>Try New York, Texas, Illinois, California, Michigan or Georgia.</p></div>'; return; }
+    profileIndex=Math.min(profileIndex,list.length-1); var p=list[profileIndex];
+    deck.innerHTML='<article class="profile-card"><div class="portrait"><span class="sample">SAMPLE PROFILE</span>'+portraitSvg(p)+'</div><div class="card-body"><div class="card-title"><h2>'+p.name+', '+p.age+'</h2><span>'+p.distance+'</span></div><p>'+p.city+', '+p.state+' · '+p.bio+'</p><div class="tags">'+p.tags.concat([p.religion]).map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div><div class="card-actions"><button class="pass" id="passBtn" type="button" aria-label="Show next profile">×</button><button class="connect" id="connectBtn" type="button">Say hello</button></div></div></article>';
+    document.getElementById('passBtn').addEventListener('click',function(){ profileIndex=(profileIndex+1)%list.length; renderProfiles(); });
+    document.getElementById('connectBtn').addEventListener('click',function(){ showSheet('Say hello to '+p.name,'A thoughtful first message can be simple.','<div class="safety-card"><span>♡</span><div><strong>Suggested opener</strong><p>Hi '+p.name+'! I saw we both enjoy '+p.tags[1].toLowerCase()+'. I’d love to connect and get to know each other.</p></div></div><button class="locate-btn" id="copyOpener" type="button">Copy opener</button>'); setTimeout(function(){ var b=document.getElementById('copyOpener'); if(b)b.onclick=function(){ showToast('Opener copied'); closeSheet(); }; },0); });
+  }
+  document.getElementById('exploreState').addEventListener('change',function(){selectedState=this.value;profileIndex=0;renderProfiles();});
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(c){ c.addEventListener('click',function(){activeFilter=c.dataset.filter;profileIndex=0;Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(x){x.classList.toggle('active',x===c);});renderProfiles();}); });
+  document.getElementById('filterBtn').addEventListener('click',function(){
+    var connectionOptions=['For you','Friendship','Coffee','Walking','Roommate','Study'];
+    var religionOptions=['All religions'].concat(religions);
+    var connectionHtml=connectionOptions.map(function(x){var key=x==='For you'?'all':x.toLowerCase();return '<button class="choice filter-choice '+(activeFilter===key?'selected':'')+'" type="button" data-key="'+key+'"><span class="choice-icon">♡</span><span><strong>'+x+'</strong></span><span class="tick"></span></button>';}).join('');
+    var religionHtml=religionOptions.map(function(x){var key=x==='All religions'?'all':x;return '<option value="'+key+'" '+(activeReligion===key?'selected':'')+'>'+x+'</option>';}).join('');
+    showSheet('Discovery filters','Choose the women you would like to see.','<div class="field"><label>Connection type</label><div class="choice-list compact">'+connectionHtml+'</div></div><div class="field"><label for="religionFilter">Religion</label><select id="religionFilter">'+religionHtml+'</select></div><button class="locate-btn" id="applyFilters" type="button" style="margin-top:18px">Apply filters</button>');
+    setTimeout(function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.filter-choice'),function(b){b.onclick=function(){activeFilter=b.dataset.key;Array.prototype.forEach.call(document.querySelectorAll('.filter-choice'),function(x){x.classList.toggle('selected',x===b);});};});
+      document.getElementById('applyFilters').onclick=function(){activeReligion=document.getElementById('religionFilter').value;profileIndex=0;Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(x){x.classList.toggle('active',x.dataset.filter===activeFilter);});renderProfiles();closeSheet();};
+    },0);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-activity]'),function(b){b.addEventListener('click',function(){activeFilter=b.dataset.activity;showView('exploreView','Explore');renderProfiles();});});
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-btn'),function(b){b.addEventListener('click',function(){showView(b.dataset.view,b.dataset.title);});});
+  function showView(id,title){ Array.prototype.forEach.call(document.querySelectorAll('.app-view'),function(v){v.classList.toggle('active',v.id===id);}); Array.prototype.forEach.call(document.querySelectorAll('.nav-btn'),function(n){n.classList.toggle('active',n.dataset.view===id);});document.getElementById('appTitle').textContent=title; }
+  document.getElementById('safetyBtn').addEventListener('click',function(){showSheet('Safety center','Meet slowly and keep control.','<div class="safety-card"><span>1</span><div><strong>Keep contact details private</strong><p>Share only when both women are comfortable.</p></div></div><div class="safety-card"><span>2</span><div><strong>Meet in public first</strong><p>Choose a daytime place and tell someone you trust.</p></div></div><div class="safety-card"><span>3</span><div><strong>Block and report</strong><p>Every real profile would include fast safety controls.</p></div></div>');});
+  function showSheet(title,lead,html){document.getElementById('sheetTitle').textContent=title;document.getElementById('sheetLead').textContent=lead;document.getElementById('sheetContent').innerHTML=html;document.getElementById('sheetWrap').classList.add('open');}
+  function closeSheet(){document.getElementById('sheetWrap').classList.remove('open');}
+  document.getElementById('sheetClose').addEventListener('click',closeSheet); document.getElementById('sheetWrap').addEventListener('click',function(e){if(e.target===this)closeSheet();});
+  document.getElementById('restartBtn').addEventListener('click',function(){document.getElementById('appShell').classList.remove('active');document.getElementById('onboarding').style.display='flex';currentStep=0;updateFlow();});
+  function showToast(text){var t=document.getElementById('toast');t.textContent=text;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1600);}
+  function escapeHtml(str){return String(str).replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
+  updateFlow();
+</script>
+</body>
+</html>
